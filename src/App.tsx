@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-function convertToLeetspeak(text: string): string {
-  const leetMap: { [key: string]: string } = {
+function convertText(text: string): string {
+  const antiCCPMap: { [key: string]: string } = {
     'a': 'а',
     'c': 'с',
     'e': 'е',
@@ -12,7 +12,7 @@ function convertToLeetspeak(text: string): string {
   };
 
   return text.toLowerCase().split('').map(char => 
-    leetMap[char] || char
+    antiCCPMap[char] || char
   ).join('');
 }
 
@@ -21,7 +21,7 @@ function App() {
   const [output, setOutput] = useState('');
 
   const handleConvert = () => {
-    setOutput(convertToLeetspeak(input));
+    setOutput(convertText(input));
   };
 
   return (
@@ -65,7 +65,7 @@ function App() {
         </div>
       </div>
       <div className="footer mt-4 text-gray-500">
-      <span className="text-sm">Made by Nic © {new Date().getFullYear()}</span>
+        <span className="text-sm">Made by Nic © {new Date().getFullYear()}</span>
       </div>
     </div>
   );
