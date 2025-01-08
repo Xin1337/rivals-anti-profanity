@@ -81,7 +81,7 @@ function App() {
                   onClick={handleCopyToClipboard}
                   className={`relative p-3 bg-gray-700 rounded-md font-mono break-all cursor-pointer hover:bg-gray-600 transition-colors ${
                     isAnimating ? "copy-animate" : ""
-                  } text-gray-200`}
+                  } text-gray-200 select-none`}
                   title="Click to copy"
                 >
                   <CSSTransition
@@ -104,7 +104,7 @@ function App() {
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span className="text-blue-400 font-medium">
+                        <span className="text-blue-400 font-medium select-none">
                           Copied!
                         </span>
                       </div>
