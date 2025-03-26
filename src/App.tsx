@@ -1,15 +1,34 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react"; // Added useRef
 import { CSSTransition } from "react-transition-group";
+
+// Simple Checkmark SVG component
+const CheckIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    strokeWidth={1.5}
+    stroke="currentColor"
+    {...props}
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M4.5 12.75l6 6 9-13.5"
+    />
+  </svg>
+);
 
 function convertText(text: string): string {
   const antiCCPMap: { [key: string]: string } = {
-    a: "а",
-    c: "с",
-    e: "е",
-    i: "і",
-    o: "о",
-    x: "х",
-    y: "у",
+    a: "а", // Cyrillic 'a'
+    c: "с", // Cyrillic 's'
+    e: "е", // Cyrillic 'e'
+    i: "і", // Cyrillic 'i'
+    o: "о", // Cyrillic 'o'
+    x: "х", // Cyrillic 'kh'
+    y: "у", // Cyrillic 'u'
+    // Add more replacements if needed
   };
 
   return text
@@ -22,106 +41,114 @@ function convertText(text: string): string {
 function App() {
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
-  const [isAnimating, setIsAnimating] = useState(false);
   const [showCopied, setShowCopied] = useState(false);
+  const outputRef = useRef<HTMLDivElement>(null); // Ref for the output div
 
   const handleConvert = () => {
     setOutput(convertText(input));
   };
 
   const handleCopyToClipboard = async () => {
+    if (!output) return; // Don't copy if output is empty
+
     try {
       await navigator.clipboard.writeText(output);
-      setIsAnimating(true);
       setShowCopied(true);
+      // Use timeout to hide the "Copied!" message
       setTimeout(() => {
-        setIsAnimating(false);
         setShowCopied(false);
-      }, 1000);
+      }, 1500); // Increased duration for visibility
     } catch (err) {
       console.error("Failed to copy text: ", err);
+      // Optionally show an error message to the user
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between items-center p-4 overflow-hidden">
-      <div className="flex-grow flex items-center justify-center">
-        <div className="bg-gray-800 p-8 rounded-lg shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-bold text-center mb-6 text-gray-200 select-none">
-            Rivals Profanity Bypass
-          </h1>
+    // Main container - Center content vertically and horizontally
+    <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center p-4 font-sans">
+      {/* Card container */}
+      <div className="bg-slate-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-lg border border-slate-700">
+        {/* Header */}
+        <h1 className="text-2xl sm:text-3xl font-bold text-center mb-2 text-slate-100 select-none"> {/* Reduced bottom margin */}
+          Rivals Profanity Bypass
+        </h1>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2 select-none">
-                Enter Text
-              </label>
-              <textarea
-                className="w-full p-2 border border-gray-700 rounded-md focus:ring-2 focus:ring-gray-700 focus:border-gray-700 bg-gray-700 text-white"
-                rows={4}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                placeholder="Type your text here..."
-              />
-            </div>
+        {/* Instructions */}
+        <p className="text-center text-slate-400 text-sm mb-6 select-none">
+          Type your text, click 'Convert Text', then click the result to copy.
+        </p>
 
-            <button
-              onClick={handleConvert}
-              className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors select-none"
-            >
-              Convert
-            </button>
-
-            {output && (
-              <div className="mt-4">
-                <label className="block text-sm font-medium text-gray-300 mb-2 select-none">
-                  Result
-                </label>
-                <div
-                  onClick={handleCopyToClipboard}
-                  className={`relative p-3 bg-gray-700 rounded-md font-mono break-all cursor-pointer hover:bg-gray-600 transition-colors ${
-                    isAnimating ? "copy-animate" : ""
-                  } text-gray-200 select-none`}
-                  title="Click to copy"
-                >
-                  <CSSTransition
-                    in={showCopied}
-                    timeout={150}
-                    classNames="fade"
-                    unmountOnExit
-                  >
-                    <div className="absolute inset-0 flex items-center justify-center bg-gray-700/95 backdrop-blur-sm rounded-md">
-                      <div className="flex items-center space-x-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5 text-blue-400"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        <span className="text-blue-400 font-medium select-none">
-                          Copied!
-                        </span>
-                      </div>
-                    </div>
-                  </CSSTransition>
-                  {output}
-                </div>
-              </div>
-            )}
-          </div>
+        {/* Input Section */}
+        <div className="mb-5">
+          <label
+            htmlFor="inputText"
+            className="block text-sm font-medium text-slate-300 mb-2 select-none"
+          >
+            Enter Text
+          </label>
+          <textarea
+            id="inputText"
+            className="w-full p-3 border border-slate-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-slate-700 text-slate-100 placeholder-slate-400 transition duration-150 ease-in-out"
+            rows={4}
+            value={input}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              setInput(e.target.value)
+            }
+            placeholder="Type or paste your text here..."
+          />
         </div>
+
+        {/* Convert Button */}
+        <button
+          onClick={handleConvert}
+          className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold py-3 px-4 rounded-lg hover:from-indigo-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800 focus:ring-indigo-500 transition duration-150 ease-in-out select-none shadow-md hover:shadow-lg"
+        >
+          Convert Text
+        </button>
+
+        {/* Output Section - Only shown when there is output */}
+        {output && (
+          <div className="mt-6">
+            <label
+              htmlFor="outputText"
+              className="block text-sm font-medium text-slate-300 mb-2 select-none"
+            >
+              Converted Text (Click to Copy)
+            </label>
+            <div
+              id="outputText"
+              ref={outputRef} // Assign ref
+              onClick={handleCopyToClipboard}
+              className="relative p-4 bg-slate-700 border border-slate-600 rounded-lg font-mono break-all cursor-pointer hover:bg-slate-600/70 transition-colors duration-150 ease-in-out text-slate-100 select-none min-h-[5rem]" // Added min-height
+              title="Click to copy"
+            >
+              {/* Copied Feedback Overlay */}
+              <CSSTransition
+                in={showCopied}
+                timeout={300} // Match transition duration
+                classNames="copied-feedback" // Use custom class names
+                unmountOnExit
+                nodeRef={outputRef} // Use nodeRef for better compatibility
+              >
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-700/90 backdrop-blur-sm rounded-lg pointer-events-none">
+                  <div className="flex items-center space-x-2 text-indigo-300">
+                    <CheckIcon className="h-6 w-6 animate-pulse" /> {/* Added animation */}
+                    <span className="font-semibold">Copied!</span>
+                  </div>
+                </div>
+              </CSSTransition>
+              {/* Display Output Text */}
+              {output}
+            </div>
+          </div>
+        )}
       </div>
-      <div className="footer mt-4 text-gray-500">
-        <span className="text-sm select-none">
-          Made by Nic © {new Date().getFullYear()}
-        </span>
-      </div>
+
+      {/* Footer */}
+      <footer className="mt-8 text-center text-slate-500 text-sm select-none">
+        Made by Nic © {new Date().getFullYear()}
+      </footer>
     </div>
   );
 }

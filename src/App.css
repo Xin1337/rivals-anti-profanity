@@ -1,12 +1,12 @@
 @keyframes copy-pulse {
   0% {
-    background-color: #374151;
+    background-color: #334155; /* slate-700 */
   }
   50% {
-    background-color: #4B5563;
+    background-color: #475569; /* slate-600 */
   }
   100% {
-    background-color: #374151;
+    background-color: #334155; /* slate-700 */
   }
 }
 
@@ -14,20 +14,38 @@
   animation: copy-pulse 0.5s ease-in-out;
 }
 
+/* Old fade transition (can be removed if no longer used) */
 .fade-enter {
   opacity: 0;
 }
-
 .fade-enter-active {
   opacity: 1;
   transition: opacity 150ms ease-in;
 }
-
 .fade-exit {
   opacity: 1;
 }
-
 .fade-exit-active {
   opacity: 0;
   transition: opacity 150ms ease-out;
+}
+
+/* New transition for the "Copied!" feedback */
+.copied-feedback-enter {
+  opacity: 0;
+  transform: scale(0.95);
+}
+.copied-feedback-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 300ms ease-out, transform 300ms ease-out;
+}
+.copied-feedback-exit {
+  opacity: 1;
+  transform: scale(1);
+}
+.copied-feedback-exit-active {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 300ms ease-in, transform 300ms ease-in;
 }
